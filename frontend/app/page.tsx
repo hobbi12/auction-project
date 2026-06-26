@@ -3,7 +3,11 @@ import SearchBar from './components/searchBar';
 import FeaturedAuctions from './components/featuredAuctions';
 import CategoriesSection from './components/categoriesSection';
 import Link from 'next/link';
-export default function Home() {
+import { cookies } from "next/headers";
+
+export default async function Home() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("access_token")?.value;
   return (
     <div className="min-h-screen bg-slate-950 text-white">
       {/* Hero Section */}
@@ -24,7 +28,7 @@ export default function Home() {
             Discover unique items, place smart bids, and win incredible deals in our exciting auction marketplace.
           </p>
           {/* Search Bar */}
-            <SearchBar/>
+            <SearchBar token={token}/>
 
         </div>
       </section>

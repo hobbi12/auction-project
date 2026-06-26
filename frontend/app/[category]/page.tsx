@@ -2,6 +2,7 @@ import Link from "next/link";
 import Countdown from "../components/countDown";
 import { Clock } from "lucide-react";
 import SearchBar from "../components/searchBar";
+import { cookies } from "next/headers";
 
 interface AuctionItem {
   id: number;
@@ -25,6 +26,8 @@ interface AuctionItem {
 }
 export default async function CategoryAuctions({ params }: { params: Promise<{ category: string }> }) {
   const { category } = await params;
+    const cookieStore = await cookies();
+  const token = cookieStore.get("access_token")?.value;
   let auctions:AuctionItem[]=[]
     try{
         const res = await fetch(`http://localhost:3000/auctions/category/${category}`, {
@@ -41,7 +44,7 @@ export default async function CategoryAuctions({ params }: { params: Promise<{ c
 
   return (
     <div className="min-h-screen bg-slate-950 pt-20 p-5">
-        <SearchBar/>
+        <SearchBar token={token}/>
       <h1 className="text-5xl font-bold text-center mb-6 capitalize">
         {category} Auctions
       </h1>

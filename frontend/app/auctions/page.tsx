@@ -52,7 +52,7 @@ export default async function AllAuctions() {
 
   return (
     <div className="min-h-screen bg-slate-950 pt-22 pb-4">
-        <SearchBar/>
+        <SearchBar token={token}/>
       <div className="max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="flex justify-between items-end mb-12">

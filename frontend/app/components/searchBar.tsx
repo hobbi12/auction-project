@@ -15,8 +15,10 @@ interface AuctionItem {
   };
   currentPrice: string;
 }
-
-export default function SearchBar() {
+interface SearchProps {
+  token?: string ;
+}
+export default function SearchBar({token}:SearchProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [auctions, setAuctions] = useState<AuctionItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -115,7 +117,7 @@ export default function SearchBar() {
       )}
 
       {/* Action Buttons */}
-      <div className="flex justify-center gap-4 mt-5">
+      {token?<div className="flex justify-center gap-4 mt-5">
         <Link 
           href="/newAuction"
           className="flex items-center gap-3 bg-indigo-600 hover:bg-indigo-500 px-8 py-4 rounded-2xl font-semibold transition active:scale-95"
@@ -130,7 +132,7 @@ export default function SearchBar() {
         >
           How Bidding Works
         </Link>
-      </div>
+      </div>:null}
     </div>
   );
 }

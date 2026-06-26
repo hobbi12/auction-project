@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from "react";
-import { X, Hammer } from "lucide-react";
+import { X, Hammer, LogIn } from "lucide-react";
+import Link from "next/link";
 
 interface BidActionProps {
   token?: string;
@@ -58,10 +59,21 @@ export default function BidAction({ token, currentPrice, auctionId }: BidActionP
       setLoading(false);
     }
   };
-
+if (!token) {
+    return (
+      <Link
+        href="/auth/login"
+        className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 py-5 rounded-2xl text-xl font-semibold transition-all duration-200 flex items-center justify-center gap-3 group"
+      >
+        <LogIn className="w-6 h-6 group-hover:scale-110 transition" />
+        Login to Place Bid
+      </Link>
+    );
+  }
   return (
     <>
       <button
+      disabled
         onClick={() => setOpenDialog(true)}
         className="w-full bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 py-5 rounded-2xl text-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/30"
       >

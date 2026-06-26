@@ -27,27 +27,31 @@ export default async function MyAuctions() {
   const cookieStore = await cookies();
   const token = cookieStore.get("access_token")?.value;
 
-  let auctions: MyAuction[] = [];
+let auctions: MyAuction[] = [];
+let errorMessage = '';
 
-  try {
-    const res = await fetch('http://localhost:3000/auctions/my-auctions', {
-        method:'GET',
-      headers: { Authorization: `Bearer ${token}` },
-      credentials: 'include',
-      cache: 'no-store'
-    });
+try {
+  const res = await fetch('http://localhost:3000/auctions/my-auctions', {
+    method: 'GET',
+    headers: { Authorization: `Bearer ${token}` },
+    credentials: 'include',
+    cache: 'no-store'
+  });
 
-    if (!res.ok) {
-        throw new Error('Error fetching my auctions')
-    }
+  if (res.status === 401 || res.status === 403) {
+    errorMessage = 'Please log in to view your auctions';
+  } else if (!res.ok) {
+    errorMessage = 'Failed to load your auctions';
+  } else {
     auctions = await res.json();
-    // console.log(token)
-  } catch (error) {
-    console.error('Failed to fetch my auctions:', error);
   }
+} catch (error) {
+  console.error('Failed to fetch my auctions:', error);
+  errorMessage = 'Connection error. Please try again later.';
+}
   return (
     <div className="min-h-screen bg-slate-950 pt-20 pb-16">
-        <SearchBar/>
+        <SearchBar token={token}/>
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-end mb-12">
           <div>
@@ -58,8 +62,20 @@ export default async function MyAuctions() {
             {auctions.length} Auctions
           </div>
         </div>
-
-        {auctions.length > 0 ? (
+    {errorMessage ? (
+            <div className="text-center py-32">
+            <div className="text-6xl mb-6">🔒</div>
+            <h3 className="text-3xl font-semibold text-slate-300 mb-4">Login Required</h3>
+            <p className="text-slate-400 mb-8 max-w-md mx-auto">{errorMessage}</p>
+            
+            <Link 
+                href="/auth/login"
+                className="inline-block bg-indigo-600 hover:bg-indigo-500 px-10 py-4 rounded-2xl font-semibold text-lg"
+            >
+                Login to Continue
+            </Link>
+            </div>
+      ) : auctions.length > 0 ?(
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {auctions.map((auction) => {
               const isActive = auction.status === 'active';
