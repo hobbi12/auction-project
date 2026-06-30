@@ -1,7 +1,8 @@
 // src/auctions/entities/auction.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Product } from 'src/products/entities/product.entity';
 import { User } from 'src/user/entities/user.entity';
+import { Bid } from 'src/bids/entities/bid.entity';
 
 @Entity('auctions')
 export class Auction {
@@ -33,6 +34,15 @@ export class Auction {
 
   @CreateDateColumn()
   createdAt!: Date;
+
+  @Column ({nullable:true})
+  winnerId?:number
+
+  @ManyToOne(()=>User,{nullable:true})
+  winner?:User
+
+  @OneToMany(() => Bid, bid => bid.auction)
+  bids?: Bid[];
 
   @UpdateDateColumn()
   updatedAt!: Date;

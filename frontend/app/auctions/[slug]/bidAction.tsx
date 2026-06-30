@@ -51,7 +51,12 @@ export default function BidAction({ token, currentPrice, auctionId }: BidActionP
       }
 
       setMessage({ type: 'success', text: 'Bid placed successfully!' });
-      setTimeout(() => setOpenDialog(false), 1500); // Close dialog after success
+      
+      setTimeout(() => {
+        setOpenDialog(false);
+        // يمكنك إضافة refresh للصفحة هنا إذا أردت
+        window.location.reload();
+      }, 1500);
 
     } catch (error) {
       setMessage({ type: 'error', text: 'Connection error. Please try again.' });
@@ -59,10 +64,12 @@ export default function BidAction({ token, currentPrice, auctionId }: BidActionP
       setLoading(false);
     }
   };
-if (!token) {
+
+  // إذا لم يكن مسجل دخول
+  if (!token) {
     return (
       <Link
-        href="/auth/login"
+        href="/login"
         className="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 py-5 rounded-2xl text-xl font-semibold transition-all duration-200 flex items-center justify-center gap-3 group"
       >
         <LogIn className="w-6 h-6 group-hover:scale-110 transition" />
@@ -70,10 +77,11 @@ if (!token) {
       </Link>
     );
   }
+
+  // إذا كان مسجل دخول
   return (
     <>
       <button
-      disabled
         onClick={() => setOpenDialog(true)}
         className="w-full bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 py-5 rounded-2xl text-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/30"
       >
@@ -85,7 +93,6 @@ if (!token) {
       {openDialog && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50 p-4">
           <div className="bg-slate-900 border border-slate-700 rounded-3xl w-full max-w-md overflow-hidden">
-            {/* Header */}
             <div className="flex justify-between items-center border-b border-slate-700 px-6 py-5">
               <h2 className="text-2xl font-bold">Place Your Bid</h2>
               <button 
@@ -120,8 +127,9 @@ if (!token) {
 
               {message && (
                 <div className={`p-4 rounded-2xl text-sm ${
-                  message.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' 
-                                             : 'bg-red-500/10 text-red-400 border border-red-500/30'
+                  message.type === 'success' 
+                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' 
+                    : 'bg-red-500/10 text-red-400 border border-red-500/30'
                 }`}>
                   {message.text}
                 </div>

@@ -6,7 +6,8 @@ import { Auction } from './entities/auction.entity';
 import { Repository } from 'typeorm';
 import { ProductsService } from 'src/products/products.service';
 import { User } from 'src/user/entities/user.entity';
-
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { LessThan } from 'typeorm';
 @Injectable()
 export class AuctionsService {
   constructor(
@@ -135,4 +136,31 @@ async findByCategory(category: string) {
       auctionId: id 
     };
   }
+
+  @Cron(CronExpression.EVERY_MINUTE)
+  async handleEndedAuctions() {
+  const endedAuctions = await this.auctionsRepository.find({
+    where: { 
+      status: 'active',
+      endsAt: LessThan(new Date())
+    },
+    relations: ['bids', 'bids.bidder'],   // جلب المزايدات + البائعين
+  });
+
+  for (const auction of endedAuctions) {
+    if (auction.bids && auction.bids.length > 0) {
+      // ترتيب المزايدات وأخذ الأعلى
+      const highestBid = auction.bids.sort((a, b) => b.amount - a.amount)[0];
+
+      auction.winnerId = highestBid.bidder.id;
+      auction.status = 'finished';
+    } else {
+      auction.status = 'finished';
+    }
+
+    await this.auctionsRepository.save(auction);
+  }
+
+  console.log(`✅ Processed ${endedAuctions.length} ended auctions`);
+}
 }

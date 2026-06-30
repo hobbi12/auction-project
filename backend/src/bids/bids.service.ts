@@ -39,20 +39,26 @@ export class BidsService {
 
 
 async findMyBids(currentUser: User) {
-  // 1. جلب كل مزايداتي مع الـ relations
   const myBids = await this.bidsRepository.find({
-    where: { bidder: { id: currentUser.id } },
+    where: { 
+      bidder: { id: currentUser.id } 
+    },
     relations: ['auction', 'auction.product'],
-    order: { createdAt: 'DESC' }   // ترتيب مهم جداً
+    order: { 
+      createdAt: 'DESC' 
+    }
   });
 
-  // 2. أخذ آخر مزايدة لكل auction (منتج)
+  // فلترة + أخذ آخر مزايدة لكل auction
   const latestBidsMap = new Map<number, any>();
 
   myBids.forEach(bid => {
-    const auctionId = bid.auction.id;   // أو product.id إذا بدك
+    // حماية من undefined
+    if (!bid.auction || !bid.auction.product) return;
 
-    // إذا ما كان موجود، أو التاريخ أحدث → استبدله
+    const auctionId = bid.auction.id;
+
+    // أخذ أحدث مزايدة (بسبب الترتيب DESC)
     if (!latestBidsMap.has(auctionId)) {
       latestBidsMap.set(auctionId, bid);
     }

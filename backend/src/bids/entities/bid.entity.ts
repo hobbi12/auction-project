@@ -9,8 +9,9 @@ export class Bid {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Auction, { onDelete: 'CASCADE' })
-  auction!: Auction;
+    @ManyToOne(() => Auction, auction => auction.bids, { onDelete: 'CASCADE' })
+    auction?: Auction;
+    
 
   @ManyToOne(() => User)
   bidder!: User;

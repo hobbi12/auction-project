@@ -7,9 +7,11 @@ import { AuctionsModule } from './auctions/auctions.module';
 import { ProductsModule } from './products/products.module';
 import { BidsModule } from './bids/bids.module';
 import { CategoriesModule } from './categories/categories.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
